@@ -3,7 +3,8 @@
 после обновления значений атрибута discount таблицы orders
 */
 create or replace trigger od_strsum_by_discount_trigger
-after update discount on orders
+after update of discount on orders
+for each row
 begin
     -- обработка исключения если discount не лежит в диапазоне 0 - 100
     if :new.discount < 0 or :new.discount > 100 then
@@ -23,16 +24,17 @@ end;
 в таблице orders_detail 
 */
 create or replace trigger orders_amount_update_trigger
-after insert or update price, qty or delete on orders_detail
+after insert or update of PRICE, QTY or delete on orders_detail
+for each row
 declare
     v_order_sum number;
     v_id_order number;
 begin
     -- определение переменной v_id_order в зависимости от команды
     if inserting then 
-        v_id_order = :new.id_order;
-    elsif updating('price') or updating('qty') or deleting then
-        v_id_order = :old.id_order;
+        v_id_order := :new.id_order;
+    elsif updating('PRICE') or updating('QTY') or deleting then
+        v_id_order := :old.id_order;
     end if;
 
     -- вычисление общей суммы по id_order
@@ -42,7 +44,7 @@ begin
         group by id_order;
 
         -- обработка исключения в случае отсутствия данных
-        exception when no_data_found then v_order_sum = 0;
+        exception when no_data_found then v_order_sum := 0;
     end;
 
     -- обновление таблицы orders по атрибуту id
@@ -58,28 +60,28 @@ end;
 и добавления значения в idx в случае вставки строки
 */
 create or replace trigger od_strsum_by_price_qty_trigger
-before update price, qty or insert on orders_detail
+before insert or update of price, qty on orders_detail
+for each row
 declare
     v_discount number;
     v_idx_max number;
 begin
     -- определение команды тригера
-    if updating('price') or updating('qty') then
+    if updating('PRICE') or updating('QTY') then
         -- выборка скидки из таблицы orders по id
-        select discount into v_discount from orders
-        where id = :old.id_order;
+        select discount into v_discount from orders where id = :new.id_order;
 
         -- обновление таблицы orders_detail по id_order
         update orders_detail
-        set str_sum = :new.price * :new:qty * (1 - v_discount / 100)
-        where id_order = :old.id_order;
+        set str_sum = :new.price * :new.qty * (1 - v_discount / 100)
+        where id_order = :new.id_order;
     elsif inserting then
         -- выборка максимального порядкового номера строки относительно номера заказа
         select max(idx) into v_idx_max from orders_detail
         where id_order = :new.id_order;
 
         -- обновление значения idx
-        :new.idx = v_idx_max;
+        :new.idx := v_idx_max;
     end if;
 end;
 
