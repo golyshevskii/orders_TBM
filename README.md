@@ -1,24 +1,23 @@
-## Ќеобходимо спроектировать триггера, которые будут обрабатывать логику и целостность данных в таблицах.
+## User manual
 ***
-### ‘ункциональные требовани€:
-  1. ѕри изменении пол€ скидка (orders.discount) должны пересчитыватьс€ 
-     суммы по строкам заказа (orders_detail.str_sum).
-  2. ѕри добавлении строки заказа, удалении строки заказа или изменении цены 
-     или количества по строке заказа должна измен€тьс€ сумма заказа (orders.amount).
-  3. ѕри изменении цены или количества по строке заказа должна автоматом пересчитыватьс€ сумма 
-     по строке заказа (orders_detail.str_sum).
-  4. ѕоле в строке заказа orders_detail.idx пор€дковый номер должен формироватьс€ автоматически 
-     и в нумерации строк заказа не должно быть пропусков. ѕоследовательность должна быть строго 1,2, Е количество строк заказа.
-  5. «начение скидки (orders.discount) может иметь значение от 0 до 100
-  6. —умма по строке вычисл€етс€ следующим образом = цена(orders_detail.price)\*количество(orders_detail.qty)\* (1-скидка(orders.descount)/100) 
-***
-> ќграничени€:
-> »змен€ть можно только следующие пол€
->    orders.n_doc
->    orders.date_doc
->    orders.discount
->    orders_detail.id_order
->    orders_detail.price
->    orders_detail.qty
->    orders_detail.sku
->    остальные пересчитываютс€ автоматически.
+> ! ”становка на MacOS ! Oracle SetUP
+1. ”становка **colima** через *homebrew*
+```
+brew install colima
+```
+2. «апуск **colima**
+```
+colima start --arch x86_64 --memory 4
+```
+3.  онтейнеризаци€ **Oracle** через *docker*
+```
+docker run -d -p 1521:1521 -e ORACLE_PASSWORD=<password> -v oracle-volume:/opt/oracle/oradata gvenzl/oracle-xe
+```
+4. «апуск *bash-терминала* контейнера
+```
+docker exec -it <container_name> bash
+```
+5. «апуск **SQL*plus**
+```
+sqlplus system/password@//localhost/XEPDB1
+```
