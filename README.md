@@ -1,23 +1,23 @@
 ## User manual
 ***
-> ! Установка на MacOS ! Oracle SetUP
-1. Установка **colima** через *homebrew*
+> ! РЈСЃС‚Р°РЅРѕРІРєР° РЅР° MacOS ! Oracle SetUP
+1. РЈСЃС‚Р°РЅРѕРІРєР° **colima** С‡РµСЂРµР· *homebrew*
 ```
 brew install colima
 ```
-2. Запуск **colima**
+2. Р—Р°РїСѓСЃРє **colima**
 ```
 colima start --arch x86_64 --memory 4
 ```
-3. Контейнеризация **Oracle** через *docker*
+3. РљРѕРЅС‚РµР№РЅРµСЂРёР·Р°С†РёСЏ **Oracle** С‡РµСЂРµР· *docker*
 ```
 docker run -d -p 1521:1521 -e ORACLE_PASSWORD=<password> -v oracle-volume:/opt/oracle/oradata gvenzl/oracle-xe
 ```
-4. Запуск *bash-терминала* контейнера
+4. Р—Р°РїСѓСЃРє *bash-С‚РµСЂРјРёРЅР°Р»Р°* РєРѕРЅС‚РµР№РЅРµСЂР°
 ```
 docker exec -it <container_name> bash
 ```
-5. Запуск **SQL*plus**
+5. Р—Р°РїСѓСЃРє **SQL*plus**
 ```
 sqlplus system/password@//localhost/XEPDB1
 ```
