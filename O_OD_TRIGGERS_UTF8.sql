@@ -40,8 +40,7 @@ begin
     -- вычисление общей суммы по id_order
     begin
         select sum(str_sum) into v_order_sum from orders_detail
-        where id_order = v_id_order
-        group by id_order;
+        where id_order = v_id_order;
 
         -- обработка исключения в случае отсутствия данных
         exception when no_data_found then v_order_sum := 0;
@@ -57,7 +56,7 @@ end;
 /* 3. 4.
 тригер для обновления значения атрибута str_sum таблицы orders_detail
 в случае обновления значения атрибута price или qty
-и добавления значения в idx в случае вставки строки
+и добавления значения в атрибут idx в случае вставки строки
 */
 create or replace trigger od_strsum_by_price_qty_trigger
 before insert or update of price, qty on orders_detail
@@ -69,12 +68,12 @@ begin
     -- определение команды тригера
     if updating('PRICE') or updating('QTY') then
         -- выборка скидки из таблицы orders по id
-        select discount into v_discount from orders where id = :new.id_order;
+        select discount into v_discount from orders where id = :old.id_order;
 
         -- обновление таблицы orders_detail по id_order
         update orders_detail
         set str_sum = :new.price * :new.qty * (1 - v_discount / 100)
-        where id_order = :new.id_order;
+        where id_order = :old.id_order;
     elsif inserting then
         -- выборка максимального порядкового номера строки относительно номера заказа
         select max(idx) into v_idx_max from orders_detail
@@ -86,6 +85,10 @@ begin
 end;
 
 
--- активация тригеров для каждой таблицы
+-- активация\отсключение тригеров для каждой таблицы
+/*
+alter table orders disable all triggers;
+alter table orders_detail disable all triggers;
 alter table orders enable all triggers;
 alter table orders_detail enable all triggers;
+*/
