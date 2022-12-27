@@ -1,6 +1,6 @@
 ## User manual
 ***
-> ! Установка на MacOS ! Oracle SetUP
+> Oracle Set UP for MacOS
 1. Установка **colima** через *homebrew*
 ```
 brew install colima
