@@ -76,9 +76,14 @@ begin
         where id_order = :old.id_order;
     elsif inserting then
         -- выборка максимального порядкового номера строки относительно номера заказа
-        select max(idx) into v_idx_max from orders_detail
-        where id_order = :new.id_order;
+        begin
+            select max(idx) into v_idx_max from orders_detail
+            where id_order = :new.id_order;
 
+            -- обработка исключения в случае отсутствия данных
+            exception when no_data_found then v_idx_max := 1;
+        end;
+        
         -- обновление значения idx
         :new.idx := v_idx_max;
     end if;
